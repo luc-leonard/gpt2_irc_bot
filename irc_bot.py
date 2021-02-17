@@ -7,23 +7,6 @@ from transformers import GPT2Tokenizer, GPT2LMHeadModel
 from transformers import pipeline
 import random
 
-# model = GPT2LMHeadModel.from_pretrained("./anarj_clean_bot/")
-# tokenizer = GPT2Tokenizer.from_pretrained("antoiloui/belgpt2")
-#
-# generator = pipeline('text-generation', model=model, tokenizer=tokenizer)
-#
-# result = generator('J\'aime ',
-#                    max_length=300,
-#                    do_sample=False,
-#                    top_p=0.95,
-#                    temperature=1,
-#                    top_k=500,
-#                    num_beams=4,
-#                    no_repeat_ngram_size=2,
-#                    num_return_sequences=1)
-#
-# print(result)
-
 
 class IrcBot(irc.bot.SingleServerIRCBot):
 
@@ -77,10 +60,14 @@ class IrcBot(irc.bot.SingleServerIRCBot):
 
 def parse_arguments():
     parser = argparse.ArgumentParser()
+    
     parser.add_argument("--model", help="the model")
     parser.add_argument("--name", help="the name")
     parser.add_argument("--wakeword",
                         help="wakeword")
+    
+    parser.add_argument("--server", help="the model")
+    parser.add_argument("--channel", help="the model")
 
     return parser.parse_args()
 
@@ -92,7 +79,7 @@ def main():
     print('generator loaded...')
     generator = pipeline('text-generation', model=model, tokenizer=tokenizer, device=0)
 
-    bot = IrcBot("#reddit-fr", args.name, "irc.redditairfrance.fr",
+    bot = IrcBot(args.channel, args.name, args.server,
                  generator, args.wakeword)
 
     bot.start()
