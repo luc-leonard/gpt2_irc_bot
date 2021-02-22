@@ -10,13 +10,14 @@ import random
 
 class IrcBot(irc.bot.SingleServerIRCBot):
 
-    def __init__(self, channel: str, nickname: str, server: str, generator, wakeword,
+    def __init__(self, channel: str, nickname: str, server: str, generator, wakeword, eos_token,
                  port=6667):
         irc.bot.SingleServerIRCBot.__init__(self, [(server, port)], nickname, nickname)
 
         self.channel = channel
         self._generator = generator
         self._wakeword = wakeword
+        self._eos_token = eos_token
 
     def on_nicknameinuse(self, c: irc.client, e):
         c.nick(c.get_nickname() + "_")
@@ -35,14 +36,16 @@ class IrcBot(irc.bot.SingleServerIRCBot):
         if args[0] == '!' + self._wakeword:
             text = self._generator(' '.join(args[1:]),
                                    max_length=100,
+                                   eos_token_id=self._eos_token,
                                    device=0,
-                                   do_sample=False,
+                                   do_sample=True,
                                    top_p=random.randint(50, 100) / 100,
                                    temperature=1,
                                    top_k=500,
                                    num_beams=4,
                                    no_repeat_ngram_size=2,
                                    num_return_sequences=1)[0]['generated_text']
+            print(text)
             wrapped = textwrap.fill(text, 400)
             for line in wrapped.splitlines(keepends=False):
                 c.privmsg(e.target, line)
