@@ -1,7 +1,6 @@
 import argparse
 from typing import Optional
 
-from numpy.core.setup_common import OPTIONAL_STDFUNCS_MAYBE
 from transformers import GPT2Tokenizer, GPT2LMHeadModel, LineByLineTextDataset
 from transformers import Trainer, TrainingArguments, DataCollatorForLanguageModeling
 
